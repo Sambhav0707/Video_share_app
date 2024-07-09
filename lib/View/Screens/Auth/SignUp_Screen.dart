@@ -86,9 +86,10 @@ class SignUpScreen extends StatelessWidget {
             const SizedBox(height: 20,),
             InkWell(
               onTap: ()=> authContoller.signUpUser(
+
                 _usernameController.text,
-                _emailController.text,
                 _passwordController.text,
+                _emailController.text,
                 authContoller.profilePhoto,
 
               ),

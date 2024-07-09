@@ -49,19 +49,18 @@ class AuthController extends GetxController{
     try{
       if(username.isNotEmpty && password.isNotEmpty && email.isNotEmpty && image!= null){
       UserCredential cred = await firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password);
-
-
+          email: email.trim(),
+          password: password.trim());
 
       String downloadUrl = await _uploadToStorage(image);
 
       model.User user = model.User(
-          email: email,
+
           name: username,
           profilePhoto: downloadUrl,
+          email: email,
           uid: cred.user!.uid);
-        await firebaseCloudFirestore.collection('users').doc(cred.user!.uid).set(user.toJson());
+      await firebaseCloudFirestore.collection('users').doc(cred.user!.uid).set(user.toJson());
 
       print('user successfully created');
 
