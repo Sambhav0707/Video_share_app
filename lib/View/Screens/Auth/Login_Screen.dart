@@ -61,7 +61,10 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20,),
             InkWell(
-              onTap: (){},
+              onTap: ()=> authContoller.loginUser(
+                _emailController.text,
+                _passwordController.text,
+              ),
               child: Container(
                 width: MediaQuery.of(context).size.width-40,
                 height: 50,
