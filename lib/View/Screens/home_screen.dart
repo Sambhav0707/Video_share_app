@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text('welcome home'),),
+      body: pages[pageIndex],
 
       bottomNavigationBar: BottomNavigationBar(
         onTap: (idx){
