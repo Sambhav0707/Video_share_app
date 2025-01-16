@@ -1,3 +1,6 @@
+import 'dart:developer';
+import 'dart:io';
+
 import'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -15,14 +18,20 @@ class AddVideoScreen extends StatefulWidget {
 
 class _AddVideoScreenState extends State<AddVideoScreen> {
 
-  pickVideo(ImageSource src , BuildContext context){
-     final video = ImagePicker().pickVideo(source: src);
+  pickVideo(ImageSource src , BuildContext context)async{
+     final video = await ImagePicker().pickVideo(source: src);
 
-     if(video != null){
-       Navigator.push(context, MaterialPageRoute(builder: (context)=>ConfirmVideoScreen()));
+     if(video!=null){
+       log('${video.path}');
+       Get.to(()=>ConfirmVideoScreen(
+         videoFile: File(video.path),
+         videoPath: video.path,
 
-
+       ));
+       print('${src}');
      }
+
+
 
   }
 
@@ -34,36 +43,38 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
               children: [
 
                 SimpleDialogOption(
-                  onPressed: pickVideo(ImageSource.gallery,context),
-                  child: Row(
+                  onPressed: ()=> pickVideo(ImageSource.gallery , context),
+                  child: const Row(
                     children: [
                       Icon(Icons.image,),
                       Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
                         child: Center(child: Text('Gallery')),
                       ),
                     ],
                   ),
                 ),
                 SimpleDialogOption(
-                  onPressed: (){},
-                  child: Row(
+                  onPressed: ()=> pickVideo(ImageSource.camera , context),
+                  child: const Row(
                     children: [
                       Icon(Icons.camera_alt,),
                       Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
                         child: Center(child: Text('Camera')),
                       ),
                     ],
                   ),
                 ),
                 SimpleDialogOption(
-                  onPressed: (){},
-                  child: Row(
+                  onPressed: (){
+                    Get.back();
+                  },
+                  child: const Row(
                     children: [
                       Icon(Icons.cancel_outlined,),
                       Padding(
-                        padding: const EdgeInsets.all(20),
+                        padding: EdgeInsets.all(20),
                         child: Center(child: Text('Cancel')),
                       ),
                     ],
@@ -93,10 +104,10 @@ class _AddVideoScreenState extends State<AddVideoScreen> {
           width: 200,
           decoration: BoxDecoration(
             color: buttonColor,
-            borderRadius: BorderRadius.all(Radius.circular(8)),
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
 
           ),
-          child: Center(
+          child: const Center(
             child: Text('ADD VIDEO',
               style: TextStyle(
                   fontSize: 20,

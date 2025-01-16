@@ -11,6 +11,8 @@ import 'package:tiktok_clone/constraints.dart';
 
 class AuthController extends GetxController{
 
+   
+
  static AuthController instance = Get.find();
 
 
@@ -105,6 +107,8 @@ class AuthController extends GetxController{
   }
 
   late Rx<User?> _user;
+
+  User get user => _user.value!;
 
   @override
   void onReady() {
