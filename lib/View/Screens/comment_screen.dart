@@ -1,68 +1,139 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:readmore/readmore.dart';
+import 'package:tiktok_clone/Controller/comment_controller.dart';
 
 class CommentScreen extends StatelessWidget {
-  const CommentScreen({super.key});
+  final String id;
+  CommentScreen({super.key, required this.id});
+
+  final TextEditingController commentsController = TextEditingController();
+  final CommentController controller = Get.put(CommentController());
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Scaffold(
-      body: SizedBox(
-        height: size.height,
-        width: size.width,
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage:
-                        NetworkImage('https://picsum.photos/200/300'),
-                    backgroundColor: Colors.black,
+    controller.updatepostId(id);
+    return WillPopScope(
+      onWillPop: () async {
+        return true;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(),
+        body: SafeArea(
+          child: SizedBox(
+            height: size.height,
+            width: size.width,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Obx(() {
+                    return ListView.builder(
+                        itemCount: controller.comments.length,
+                        itemBuilder: (context, index) {
+                          final data = controller.comments[index];
+                          return ListTile(
+                            leading: CircleAvatar(
+                              backgroundImage: NetworkImage(data.profilePhoto),
+                              backgroundColor: Colors.black,
+                            ),
+                            title: Row(
+                              children: [
+                                Text(
+                                  data.username,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  controller.processFirestoreTimestamp(
+                                      data.datePublished),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                    fontSize: 8,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                Text(
+                                  '${data.likes.length} likes',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                    fontSize: 8,
+                                  ),
+                                )
+                               
+                              ],
+                            ),
+                           
+                            subtitle: ReadMoreText(
+                              trimMode: TrimMode.Line,
+                              trimLines: 2,
+                              colorClickableText: Colors.red.shade200,
+                              trimCollapsedText: 'Show more',
+                              trimExpandedText: 'Show less',
+                              moreStyle: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red.shade200),
+                              data.comment,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                            trailing: const Icon(Icons.favorite),
+                          );
+                        });
+                  }),
+                ),
+                const Divider(
+                  color: Colors.transparent,
+                ),
+                ListTile(
+                  title: TextFormField(
+                      controller: commentsController,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      decoration: const InputDecoration(
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.red),
+                        ),
+                        labelText: 'Add a comment',
+                        labelStyle: TextStyle(fontSize: 15, color: Colors.grey),
+                      )),
+                  trailing: TextButton(
+                    onPressed: () {
+                      controller.postComment(commentsController.text.trim());
+                    },
+                    child: const Text(
+                      'Send',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
-                  title: Row(
-                    children: [
-                      Text(
-                        'Username',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                          fontSize: 20,
-                        ),
-                      ),Text(
-                        'comment description',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      )
-                    ],
-                  ),
-                  subtitle: Row(
-                    children: [
-                      Text(
-                        '1 Day ',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      ),Text(
-                        '50 likes',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: 20,
-                        ),
-                      )
-                    ],
-                  ) ,
-                );
-              }),
-            )
-          ],
+                )
+              ],
+            ),
+          ),
         ),
       ),
     );
