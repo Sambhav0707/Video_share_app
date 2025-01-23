@@ -125,7 +125,9 @@ class _VideoScreenState extends State<VideoScreen> {
                                     children: [
                                       InkWell(
                                         onTap: () {
-                                          Get.to(CommentScreen());
+                                          Get.to(CommentScreen(
+                                            id: data.id,
+                                          ));
                                         },
                                         child: const Icon(
                                           Icons.comment,

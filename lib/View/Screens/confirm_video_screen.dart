@@ -132,11 +132,9 @@ class _ConfirmVideoScreenState extends State<ConfirmVideoScreen> {
                               return const Text(
                                 'share',
                                 style: TextStyle(
-                                  color: Colors
-                                      .black, // Set the text color to black
-                                  fontWeight: FontWeight
-                                      .bold, // Optional: Make the text bold
-                                  fontSize: 16, // Optional: Set font size
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
                                 ),
                               );
                             }
