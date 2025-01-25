@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:readmore/readmore.dart';
 import 'package:tiktok_clone/Controller/comment_controller.dart';
+import 'package:tiktok_clone/constraints.dart';
 
 class CommentScreen extends StatelessWidget {
   final String id;
@@ -72,10 +73,8 @@ class CommentScreen extends StatelessWidget {
                                     fontSize: 8,
                                   ),
                                 )
-                               
                               ],
                             ),
-                           
                             subtitle: ReadMoreText(
                               trimMode: TrimMode.Line,
                               trimLines: 2,
@@ -93,7 +92,18 @@ class CommentScreen extends StatelessWidget {
                                 fontSize: 12,
                               ),
                             ),
-                            trailing: const Icon(Icons.favorite),
+                            trailing: InkWell(
+                              onTap: () {
+                                controller.likeComment(data.id);
+                              },
+                              child: Icon(
+                                Icons.favorite,
+                                color:
+                                    data.likes.contains(authContoller.user.uid)
+                                        ? Colors.red
+                                        : Colors.white,
+                              ),
+                            ),
                           );
                         });
                   }),
