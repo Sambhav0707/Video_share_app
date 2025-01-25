@@ -79,14 +79,14 @@ class CommentController extends GetxController {
   }
 
   DateTime convertFirestoreTimestampToDateTime(Timestamp timestamp) {
-  return timestamp.toDate();
-}
+    return timestamp.toDate();
+  }
 
-String formatDateTime(DateTime dateTime) {
-  final DateFormat formatter = DateFormat("MMMM d, y 'at' h:mm:ss a 'UTC'xxx");
-  return formatter.format(dateTime.toUtc());
-}
-
+  String formatDateTime(DateTime dateTime) {
+    final DateFormat formatter =
+        DateFormat("MMMM d, y 'at' h:mm:ss a 'UTC'xxx");
+    return formatter.format(dateTime.toUtc());
+  }
 
   String getRelativeTime(String dateTimeString) {
     try {
@@ -115,17 +115,46 @@ String formatDateTime(DateTime dateTime) {
     }
   }
 
+  String processFirestoreTimestamp(Timestamp timestamp) {
+    // Convert Firestore Timestamp to DateTime
+    DateTime dateTime = convertFirestoreTimestampToDateTime(timestamp);
 
-String processFirestoreTimestamp(Timestamp timestamp) {
-  // Convert Firestore Timestamp to DateTime
-  DateTime dateTime = convertFirestoreTimestampToDateTime(timestamp);
+    // Format DateTime as a string
+    String formattedDate = formatDateTime(dateTime);
 
-  // Format DateTime as a string
-  String formattedDate = formatDateTime(dateTime);
+    // Get relative time representation
+    String relativeTime = getRelativeTime(dateTime.toIso8601String());
 
-  // Get relative time representation
-  String relativeTime = getRelativeTime(dateTime.toIso8601String());
+    return relativeTime;
+  }
 
-  return relativeTime;
-}
+  void likeComment(String id) async {
+    var uid = authContoller.user.uid;
+    DocumentSnapshot doc = await firebaseCloudFirestore
+        .collection("videos")
+        .doc(postId)
+        .collection("comments")
+        .doc(id)
+        .get();
+
+    if ((doc.data()! as dynamic)["likes"].contains(uid)) {
+      await firebaseCloudFirestore
+          .collection("videos")
+          .doc(postId)
+          .collection("comments")
+          .doc(id)
+          .update({
+        "likes": FieldValue.arrayRemove([uid])
+      });
+    } else {
+      await firebaseCloudFirestore
+          .collection("videos")
+          .doc(postId)
+          .collection("comments")
+          .doc(id)
+          .update({
+        "likes": FieldValue.arrayUnion([uid])
+      });
+    }
+  }
 }
